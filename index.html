@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tool Notes — MCP-Native Voice Memory</title>
+  <meta name="description" content="Tool Notes turns voice into searchable, structured, agent-accessible memory." />
+  <style>
+    :root {
+      --bg: #08090d;
+      --panel: #11131b;
+      --panel-2: #171a24;
+      --text: #f6f7fb;
+      --muted: #a7adbd;
+      --line: rgba(255,255,255,.12);
+      --accent: #7c5cff;
+      --accent-2: #37d5ff;
+      --good: #35d07f;
+      --warn: #ffd166;
+      --danger: #ff5d73;
+      --shadow: 0 28px 80px rgba(0,0,0,.45);
+      --radius: 26px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(124,92,255,.28), transparent 35%),
+        radial-gradient(circle at 85% 15%, rgba(55,213,255,.22), transparent 32%),
+        radial-gradient(circle at 40% 90%, rgba(53,208,127,.12), transparent 35%),
+        var(--bg);
+      min-height: 100vh;
+    }
+    a { color: inherit; }
+    .wrap { width: min(1160px, calc(100% - 32px)); margin: 0 auto; }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(20px);
+      background: rgba(8,9,13,.68);
+      border-bottom: 1px solid var(--line);
+    }
+    nav {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: -.02em;
+    }
+    .mark {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 12px 32px rgba(124,92,255,.35);
+    }
+    .navlinks { display: flex; align-items: center; gap: 18px; color: var(--muted); font-size: 14px; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn.primary {
+      border: 0;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white;
+      box-shadow: 0 16px 44px rgba(124,92,255,.35);
+    }
+    .hero {
+      padding: 82px 0 46px;
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      align-items: center;
+      gap: 42px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(255,255,255,.05);
+      font-weight: 700;
+      font-size: 13px;
+    }
+    h1 {
+      font-size: clamp(44px, 7vw, 86px);
+      line-height: .92;
+      margin: 22px 0;
+      letter-spacing: -.07em;
+    }
+    .gradient {
+      background: linear-gradient(135deg, #fff, #b9c6ff 35%, #7ee7ff);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .lead {
+      color: var(--muted);
+      font-size: clamp(18px, 2vw, 23px);
+      line-height: 1.55;
+      max-width: 680px;
+      margin: 0 0 26px;
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 28px 0; }
+    .doctrine {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 28px;
+    }
+    .pill {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,.045);
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .pill b { display: block; color: var(--text); font-size: 15px; margin-bottom: 4px; }
+    .phone {
+      min-height: 640px;
+      border-radius: 46px;
+      padding: 16px;
+      background: linear-gradient(145deg, rgba(255,255,255,.24), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,.18);
+    }
+    .screen {
+      height: 100%;
+      min-height: 608px;
+      border-radius: 34px;
+      background: #05060a;
+      border: 1px solid rgba(255,255,255,.1);
+      overflow: hidden;
+      position: relative;
+    }
+    .screen-top {
+      padding: 22px;
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    .recorder {
+      padding: 8px 22px 24px;
+    }
+    .recorder h2 { font-size: 34px; margin: 12px 0 6px; letter-spacing: -.04em; }
+    .status { color: var(--good); font-size: 14px; font-weight: 800; }
+    .wave {
+      height: 128px;
+      margin: 28px 0;
+      border-radius: 24px;
+      background:
+        repeating-linear-gradient(90deg, rgba(55,213,255,.9) 0 4px, transparent 4px 16px),
+        linear-gradient(180deg, rgba(124,92,255,.22), rgba(55,213,255,.06));
+      mask-image: radial-gradient(ellipse at center, #000 25%, transparent 72%);
+      opacity: .9;
+    }
+    .record-btn {
+      width: 94px;
+      height: 94px;
+      margin: 0 auto 24px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ff4d67, #ff8f5a);
+      border: 9px solid rgba(255,255,255,.12);
+      box-shadow: 0 20px 60px rgba(255,93,115,.42);
+    }
+    .note-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 16px;
+      margin-top: 12px;
+    }
+    .note-card small { color: var(--muted); }
+    .tagrow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .tag { font-size: 12px; color: #dce8ff; padding: 6px 9px; border-radius: 999px; background: rgba(124,92,255,.18); border: 1px solid rgba(124,92,255,.28); }
+    section { padding: 46px 0; }
+    .section-title {
+      font-size: clamp(32px, 4vw, 52px);
+      line-height: 1;
+      letter-spacing: -.05em;
+      margin: 0 0 16px;
+    }
+    .section-lead { color: var(--muted); max-width: 760px; font-size: 18px; line-height: 1.6; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; }
+    .card {
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(17,19,27,.78);
+      box-shadow: 0 18px 48px rgba(0,0,0,.22);
+    }
+    .card h3 { margin: 0 0 10px; font-size: 22px; letter-spacing: -.03em; }
+    .card p { margin: 0; color: var(--muted); line-height: 1.55; }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .step {
+      padding: 18px;
+      min-height: 130px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(255,255,255,.045);
+    }
+    .num { color: var(--accent-2); font-weight: 900; margin-bottom: 10px; }
+    pre {
+      overflow: auto;
+      padding: 20px;
+      border-radius: 22px;
+      background: #05060a;
+      border: 1px solid var(--line);
+      color: #dce8ff;
+      line-height: 1.55;
+    }
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: stretch; }
+    footer { color: var(--muted); border-top: 1px solid var(--line); padding: 32px 0 48px; margin-top: 40px; }
+    @media (max-width: 900px) {
+      .hero, .split { grid-template-columns: 1fr; }
+      .grid, .doctrine { grid-template-columns: 1fr; }
+      .flow { grid-template-columns: 1fr; }
+      .phone { min-height: auto; }
+      .navlinks { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <nav>
+        <div class="brand"><div class="mark">🎙️</div><span>Tool Notes</span></div>
+        <div class="navlinks">
+          <a href="#why">Why</a>
+          <a href="#flow">Flow</a>
+          <a href="#mcp">MCP</a>
+          <a href="#roadmap">Roadmap</a>
+        </div>
+        <a class="btn" href="#spec">Spec</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap hero">
+      <div>
+        <div class="eyebrow">MCP-native voice memory</div>
+        <h1><span class="gradient">Voice notes</span><br/>for agents,<br/>not just humans.</h1>
+        <p class="lead">
+          Tool Notes records, transcribes, structures, embeds, and exposes your voice memos through safe MCP tools so ChatGPT, Claude, and future agents can search and reason over your spoken ideas.
+        </p>
+        <div class="hero-actions">
+          <a class="btn primary" href="#flow">View the flow</a>
+          <a class="btn" href="#mcp">MCP tools</a>
+        </div>
+        <div class="doctrine">
+          <div class="pill"><b>Record</b>Capture the thought before it disappears.</div>
+          <div class="pill"><b>Structure</b>Transcript, tags, projects, chunks, entities.</div>
+          <div class="pill"><b>Expose</b>LLMs access memory through scoped MCP tools.</div>
+        </div>
+      </div>
+
+      <div class="phone" aria-label="Tool Notes mobile UI mockup">
+        <div class="screen">
+          <div class="screen-top"><span>9:33</span><span>5G ◖</span></div>
+          <div class="recorder">
+            <div class="status">● Recording to agent memory</div>
+            <h2>New Voice Note</h2>
+            <p class="lead" style="font-size:15px;margin:0;">Project: AFO Toolsmith · Tags: brainstorm, mcp</p>
+            <div class="wave"></div>
+            <div class="record-btn"></div>
+            <div class="note-card">
+              <small>Live transcript</small>
+              <p style="margin:8px 0 0;line-height:1.55;">&ldquo;The real key is MCP-compatible software. Voice memos should be born searchable, structured, and available to the agent...&rdquo;</p>
+              <div class="tagrow">
+                <span class="tag">workcells</span>
+                <span class="tag">voice-first</span>
+                <span class="tag">afo-toolsmith</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section id="why">
+      <div class="wrap">
+        <h2 class="section-title">Voice Memos are a human UI.<br/>Tool Notes is agent memory.</h2>
+        <p class="section-lead">Apple Voice Memos records and transcripts for humans. It has no MCP surface, no structured metadata, no vector search, and no safe tool access for LLMs. Tool Notes is designed from the agent side out.</p>
+        <div class="grid">
+          <div class="card"><h3>🔒 Trapped transcripts</h3><p>Apple Voice Memos locks your transcript inside a human-only app. No agent can search or reason over it.</p></div>
+          <div class="card"><h3>🧠 Agent-accessible memory</h3><p>Every Tool Notes transcript is stored, chunked, embedded, and exposed through MCP tools. ChatGPT and Claude can find it.</p></div>
+          <div class="card"><h3>⚙️ MCP-compatible by design</h3><p>Tool Notes exposes its state and actions to agents through safe, scoped tools — not UI scraping or clipboard hacks.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="flow">
+      <div class="wrap">
+        <h2 class="section-title">The flow</h2>
+        <p class="section-lead">From spoken thought to agent-accessible memory in seconds.</p>
+        <div class="flow">
+          <div class="step"><div class="num">01</div><b>Record</b><p style="margin:8px 0 0;color:#a7adbd;font-size:14px;">Voice Memos, Shortcut, or native app.</p></div>
+          <div class="step"><div class="num">02</div><b>Ingest</b><p style="margin:8px 0 0;color:#a7adbd;font-size:14px;">POST transcript + metadata to /api/notes/ingest.</p></div>
+          <div class="step"><div class="num">03</div><b>Store</b><p style="margin:8px 0 0;color:#a7adbd;font-size:14px;">D1 database. Structured record. Indexed.</p></div>
+          <div class="step"><div class="num">04</div><b>Embed</b><p style="margin:8px 0 0;color:#a7adbd;font-size:14px;">Chunks embedded into Vectorize for semantic search.</p></div>
+          <div class="step"><div class="num">05</div><b>Search</b><p style="margin:8px 0 0;color:#a7adbd;font-size:14px;">LLMs access through MCP tools. Search, summarize, extract.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="mcp">
+      <div class="wrap">
+        <h2 class="section-title">MCP tool surface</h2>
+        <p class="section-lead">Tool Notes exposes a clean, scoped MCP surface for LLMs to search, retrieve, summarize, tag, and operationalize voice memory.</p>
+        <div class="split">
+          <pre>note_create
+note_ingest_transcript
+note_ingest_audio
+note_list_recent
+note_get
+note_search
+note_semantic_search
+note_summarize
+note_extract_tasks
+note_extract_entities
+note_tag
+note_link_project
+note_export_markdown</pre>
+          <div>
+            <div class="card" style="margin-bottom:16px;">
+              <h3>Ingest endpoint</h3>
+              <pre style="margin-top:12px;font-size:13px;">POST /api/notes/ingest
+{
+  title, recorded_at,
+  duration_seconds,
+  transcript,
+  tags, projects
+}</pre>
+            </div>
+            <div class="card">
+              <h3>MCP endpoint</h3>
+              <pre style="margin-top:12px;font-size:13px;">POST /mcp
+https://tool-notes
+  .agentfeedoptimization
+  .com/mcp</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="roadmap">
+      <div class="wrap">
+        <h2 class="section-title">Roadmap</h2>
+        <p class="section-lead">Phase 0 is the repo and spec. Phase 1 is the Shortcut bridge. Phase 2 is native recording.</p>
+        <div class="grid">
+          <div class="card"><h3>Phase 0</h3><p>Repo, spec, static UI. Toolsmith-ready.</p></div>
+          <div class="card"><h3>Phase 1</h3><p>Shortcut transcript ingest. D1 + Vectorize. MCP search live.</p></div>
+          <div class="card"><h3>Phase 2</h3><p>Native iPhone recorder. Auto-transcribe, auto-embed.</p></div>
+          <div class="card"><h3>Phase 3</h3><p>Bulk import old Voice Memos and dedupe memory.</p></div>
+          <div class="card"><h3>Phase 4</h3><p>Agent workflows: tasks, specs, decisions, weekly digests.</p></div>
+          <div class="card"><h3>Phase 5</h3><p>Public template for MCP-native personal memory apps.</p></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <b>Tool Notes</b><br/>
+      MCP-native voice notes for mobile-first builders.
+    </div>
+  </footer>
+</body>
+</html>
